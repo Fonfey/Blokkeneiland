@@ -1,0 +1,57 @@
+name: Bouw iPad-app (IPA)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: XcodeGen installeren
+        run: brew install xcodegen
+
+      - name: Xcode-project genereren
+        run: xcodegen generate
+
+      - name: App bouwen (zonder ondertekening)
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project Blokkeneiland.xcodeproj \
+            -scheme Blokkeneiland \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            build 2>&1 | grep -E "error:|warning: unre|BUILD (SUCCEEDED|FAILED)|\*\*" || true
+          test -d build/Build/Products/Release-iphoneos/Blokkeneiland.app
+
+      - name: IPA maken
+        run: |
+          mkdir -p Payload
+          cp -R build/Build/Products/Release-iphoneos/Blokkeneiland.app Payload/
+          zip -qry Blokkeneiland.ipa Payload
+
+      - name: IPA bewaren als artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Blokkeneiland-ipa
+          path: Blokkeneiland.ipa
+
+      - name: Release met downloadlink
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: Blokkeneiland build ${{ github.run_number }}
+          body: Download Blokkeneiland.ipa en installeer via je installatiedienst.
+          files: Blokkeneiland.ipa

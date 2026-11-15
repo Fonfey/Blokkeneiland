@@ -1,0 +1,45 @@
+name: Blokkeneiland
+options:
+  bundleIdPrefix: nl.fonfey
+  deploymentTarget:
+    iOS: "16.0"
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+targets:
+  Blokkeneiland:
+    type: application
+    platform: iOS
+    sources:
+      - Sources
+    scheme: {}
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: nl.fonfey.blokkeneiland
+        PRODUCT_NAME: Blokkeneiland
+        TARGETED_DEVICE_FAMILY: "2"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        GENERATE_INFOPLIST_FILE: NO
+        SWIFT_OPTIMIZATION_LEVEL: "-O"
+    info:
+      path: Sources/Info.plist
+      properties:
+        CFBundleDisplayName: Blokkeneiland
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        UILaunchScreen: {}
+        UIRequiresFullScreen: true
+        UIStatusBarHidden: true
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        NSLocalNetworkUsageDescription: Blokkeneiland zoekt andere iPads in de buurt zodat jullie samen kunnen spelen.
+        NSBluetoothAlwaysUsageDescription: Blokkeneiland gebruikt bluetooth om samen te spelen met iPads in de buurt.
+        NSBonjourServices:
+          - _blokeiland._tcp
+          - _blokeiland._udp
